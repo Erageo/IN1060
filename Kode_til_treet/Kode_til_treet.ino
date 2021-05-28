@@ -2,7 +2,7 @@
 
 //Neopixel til treet
 #define PIN 2                 //Input pin som Neopixel er koblet til
-#define NUMPIXELS 60          //Antall neopixels i strip'en
+#define NUMPIXELS 12          //Antall neopixels i strip'en
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 //Variabler til Neopixel
@@ -23,6 +23,10 @@ int photoState = 0;           //Variabel som lagrer photoresistorens verdi
 void setup() {
   //Starter opp NeoPixel biblioteket
   pixels.begin();
+
+  //Sikre at alle NeoPixels er av hvis RESET trykkes
+  pixels.clear();
+  pixels.show();
  
   //Potentiometer og photoresistor
   Serial.begin(9600);
@@ -40,7 +44,7 @@ void loop() {
 
 void photoresistor() {
   //Leser og lagrer verdien fra photoresistoren
-  photoState = analogRead(A1);
+  photoState = analogRead(photoPin);
 
    //Hvis det er lyst saa kalles det paa readPot() som sjekker hvilken verdi potentiometeret er paa
    //og videre starter en oekt som tilsvarer med verdien til potentiometeret
@@ -56,13 +60,10 @@ void photoresistor() {
 }
 
 void turnOnPixel(long delayval) {
-  //Kaller paa modulen setColor() som velger random farge til Neopixelene
-  setColor();
-
-  //For-lokken gaar gjennom alle Neopixelene, gir dem farge og skrur de paa
+//For-lokken gaar gjennom alle Neopixelene, gir dem farge og skrur de paa
   for (int i=0; i < NUMPIXELS; i++) {
       //pixels.Color tar RBG verdier fra 0 til 255
-      pixels.setPixelColor(i, pixels.Color(redColor, greenColor, blueColor));
+      pixels.setPixelColor(i, pixels.Color(16, 24, 8));
 
       //Lager en long variabel som kan holde paa antall NUMPIXELS
       long pix = NUMPIXELS;
@@ -81,13 +82,6 @@ void turnOnPixel(long delayval) {
   //Deretter skrus lysene av
   pixels.clear();
   pixels.show();
-}
-
-void setColor() {
-  //Velger random tall til RBG
-  redColor = random(0, 255);
-  greenColor = random(0, 255);
-  blueColor = random(0, 255);
 }
 
 void readPot() {
